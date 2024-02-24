@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 퀴즈</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .answer-button {
+            font-size: 16px;
+            margin: 5px;
+            padding: 10px;
+            width: 50px;
+            cursor: pointer;
+        }
+
+        #result-container {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #e0e0e0;
+        }
+
+        #summary-container {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #e0e0e0;
+        }
+
+        #summary-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #summary-list li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <h1>간단한 퀴즈</h1>
+        <div id="questions-container"></div>
+        <button onclick="submitAnswers()">제출</button>
+    </div>
+
+    <div id="result-container">
+        <h2 id="result-message"></h2>
+        <button onclick="showSummary()">퀴즈 결과</button>
+    </div>
+
+    <div id="summary-container">
+        <h2>퀴즈 결과</h2>
+        <ul id="summary-list"></ul>
+        <button onclick="resetQuiz()">다시 시작</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "대한민국의 수도는 어디인가요?", answer: "O" },
+            { question: "1 + 1은 몇 인가요?", answer: "O" },
+            { question: "지구의 모양은 무엇인가요?", answer: "X" }
+        ];
+
+        let userResponses = [];
+
+        function loadQuestions() {
+            const questionsContainer = document.getElementById("questions-container");
+
+            questions.forEach((q, index) => {
+                const questionElement = document.createElement("div");
+                questionElement.classList.add("question");
+                questionElement.textContent = `${index + 1}. ${q.question}`;
+                
+                const oButton = createAnswerButton(index, "O");
+                const xButton = createAnswerButton(index, "X");
+
+                questionElement.appendChild(oButton);
+                questionElement.appendChild(xButton);
+                questionsContainer.appendChild(questionElement);
+            });
+        }
+
+        function createAnswerButton(questionIndex, answer) {
+            const button = document.createElement("button");
+            button.classList.add("answer-button");
+            button.textContent = answer;
+            button.onclick = function () {
+                userResponses[questionIndex] = { questionIndex: questionIndex + 1, answer };
+            };
+            return button;
+        }
+
+        function submitAnswers() {
+            const quizContainer = document.getElementById("quiz-container");
+            const resultContainer = document.getElementById("result-container");
+            const summaryContainer = document.getElementById("summary-container");
+
+            quizContainer.style.display = "none";
+            resultContainer.style.display = "none";
+            summaryContainer.style.display = "block";
+
+            showSummary();
+        }
+
+        function showSummary() {
+            const summaryList = document.getElementById("summary-list");
+
+            summaryList.innerHTML = userResponses.map(response =>
+                `<li>문제 ${response.questionIndex}: ${response.answer ? '정답' : '틀림'}</li>`
+            ).join('');
+        }
+
+        function resetQuiz() {
+            userResponses = [];
+            const quizContainer = document.getElementById("quiz-container");
+            const resultContainer = document.getElementById("result-container");
+            const summaryContainer = document.getElementById("summary-container");
+
+            quizContainer.style.display = "block";
+            resultContainer.style.display = "none";
+            summaryContainer.style.display = "none";
+
+            loadQuestions();
+        }
+
+        // 초기화면 설정
+        loadQuestions();
+    </script>
+</body>
+</html>
