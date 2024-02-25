@@ -3,87 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>간단한 퀴즈</title>
+    <title>Modern 퀴즈</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f4;
+            color: #333;
             text-align: center;
             margin: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .notice {
+            color: #fff;
+            background-color: #3498db;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #quiz-container, #result-container, #summary-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
         }
 
         #quiz-container {
-            max-width: 600px;
-            margin: auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #3498db;
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 20px;
         }
 
         .question {
             margin-bottom: 20px;
+            font-size: 18px;
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            color: #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question button {
+            font-size: 16px;
+            margin: 5px;
+            padding: 15px 30px;
+            width: 50px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.1s;
+            color: #fff;
+        }
+
+        .question button:hover {
+            background-color: #3498db;
+        }
+
+        .o-button {
+            background-color: #3498db;
+        }
+
+        .x-button {
+            background-color: #e74c3c;
+        }
+
+        .question button:active {
+            transform: scale(0.95);
+        }
+
+        #result-list, #summary-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .result-info, #summary-list li {
+            margin-bottom: 15px;
+            font-size: 16px;
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            color: #333;
+        }
+
+        .result-info:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .answer-explanation-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 80%;
+            text-align: left;
+            position: relative;
+            color: #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #7f8c8d;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #dark-mode-toggle:hover {
+            background-color: #95a5a6;
+        }
+
+        #dark-mode-toggle.dark-mode {
+            background-color: #fff;
+            color: #333;
         }
 
         .answer-button {
             font-size: 16px;
             margin: 5px;
-            padding: 10px;
-            width: 50px;
+            padding: 15px 30px;
             cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.1s;
+            color: #fff;
         }
 
-        #result-container {
+        .answer-button:hover {
+            background-color: #3498db;
+        }
+
+        .answer-button:active {
+            transform: scale(0.95);
+        }
+
+        /* 제출 버튼 스타일 수정 */
+        #quiz-container button.answer-button {
+            background-color: #e67e22;
+        }
+
+        #quiz-container button.answer-button:hover {
+            background-color: #d35400;
+        }
+
+        #quiz-container button.answer-button:active {
+            transform: scale(0.95);
+        }
+
+        /* 결과 화면의 해설 보기 버튼 스타일 수정 */
+        #result-container button.answer-button {
+            background-color: #27ae60;
+        }
+
+        #result-container button.answer-button:hover {
+            background-color: #2ecc71;
+        }
+
+        #result-container button.answer-button:active {
+            transform: scale(0.95);
+        }
+
+        /* 퀴즈 결과 영역 숨김 */
+        #result-container, #summary-container {
             display: none;
-            margin-top: 20px;
-            padding: 10px;
+        }
+
+        #quiz-container button.answer-button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        #quiz-container button.answer-button:disabled:hover {
+            background-color: #95a5a6;
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .answer-explanation-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9); /* 밝은 배경색으로 변경 */
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .popup-content {
+            background: #3498db;
+            padding: 30px;
             border-radius: 8px;
-            background-color: #e0e0e0;
+            max-width: 80%;
+            text-align: left;
+            position: relative;
+            color: #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
         }
 
-        #summary-container {
+        .popup-explanation {
+            font-size: 18px;
+            line-height: 1.6;
             margin-top: 20px;
-            padding: 10px;
+            padding: 15px; /* explanation 부분에 패딩 추가 */
+            background-color: #ecf0f1; /* explanation 부분의 배경색 설정 */
             border-radius: 8px;
-            background-color: #e0e0e0;
-        }
-
-        #summary-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        #summary-list li {
-            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>사전진단</h1>
+        <div class="notice">
+            <p>학습을 시작하기에 앞서 기본적인 내용을 얼마나 알고 있는지 사전진단을 통해 알아보겠습니다.<br>
+            진단 결과에 따라 학습요약이나 심화학습 중 맞춤형으로 자동 구성됩니다.<br>
+            <strong style="color: red;">문제를 읽고 정답을 선택한 다음, 하단에 있는 답안 제출 버튼을 클릭해주세요.</strong>
+            </p>
+        </div>
+    </header>
+
     <div id="quiz-container">
-        <h1>간단한 퀴즈</h1>
+        <h2>퀴즈</h2>
         <div id="questions-container"></div>
-        <button onclick="submitAnswers()">제출</button>
+        <button class="answer-button" onclick="submitAnswers()">제출</button>
+        <p id="quiz-warning" style="color: red; display: none;">모든 문제를 풀어주세요.</p>
     </div>
 
     <div id="result-container">
         <h2 id="result-message"></h2>
-        <button onclick="showSummary()">퀴즈 결과</button>
+        <div id="result-list"></div>
+        <!-- <button class="answer-button" onclick="showSummary()">퀴즈 결과</button> -->
     </div>
 
     <div id="summary-container">
         <h2>퀴즈 결과</h2>
         <ul id="summary-list"></ul>
-        <button onclick="resetQuiz()">다시 시작</button>
+        <button class="answer-button" onclick="resetQuiz()">다시 시작</button>
     </div>
+
+    <div class="answer-explanation-popup" id="answerExplanationPopup" onclick="closePopup()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <span class="close-button" onclick="closePopup()">X</span>
+            <h3 id="popup-question"></h3>
+            <p id="popup-result"></p>
+            <div id="popup-explanation" class="popup-explanation"></div>
+        </div>
+    </div>
+
+    <button id="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
 
     <script>
         const questions = [
-            { question: "대한민국의 수도는 어디인가요?", answer: "O" },
-            { question: "1 + 1은 몇 인가요?", answer: "O" },
-            { question: "지구의 모양은 무엇인가요?", answer: "X" }
+            { question: "효과적인 코칭은 개인이나 그룹의 성과와 성장을 도모하기 위해 '적절한 기술과 접근법'을 활용하여 지원하는 프로세스를 말한다.", answer: "O", explanation: "효과적인 코칭’을 실현하기 위한 몇 가지 핵심원칙과 전략들이 있지만 효과적인 코칭은 개인이나 그룹의 성과와 성장을 도모하기 위해 ‘적절한 기술과 접근법’을 활용하여 지원하는 프로세스를 말한다." },
+            { question: "TO-BE 모델은 ‘현재 상태에서 과거의 원하는 목표’를 향해 나아가는 과정을 나타내는 개념이다", answer: "X", explanation: "프로세스 개선이나 조직 구성원의 변화와 관련하여 TO-BE 모델은 이상적인 상황을 설계하고 계획을 수립하는 데 도움을 준다. TO-BE 모델은 ‘현재 상태에서 미래의 원하는 목표’를 향해 나아가는 과정을 나타내는 개념이다." },
+            { question: "난이도에 따른 코칭은 문제나 목표의 복잡성과 난이도에 따라 적절한 코칭 접근을 조정하는 것을 의미한다.", answer: "O", explanation: "다양한 난이도의 문제나 목표가 있을 수 있기 때문에 이에 따라 적절한 전략을 선택하여 지원하는 코칭이 필요하다. 난이도에 따른 코칭은 문제나 목표의 복잡성과 난이도에 따라 적절한 코칭 접근을 조정하는 것을 의미한다." }
         ];
 
         let userResponses = [];
+        let darkModeEnabled = false;
 
         function loadQuestions() {
             const questionsContainer = document.getElementById("questions-container");
@@ -105,9 +351,11 @@
         function createAnswerButton(questionIndex, answer) {
             const button = document.createElement("button");
             button.classList.add("answer-button");
+            button.classList.add(answer.toLowerCase() + "-button");
             button.textContent = answer;
             button.onclick = function () {
-                userResponses[questionIndex] = { questionIndex: questionIndex + 1, answer };
+                userResponses[questionIndex] = { questionIndex: questionIndex + 1, answer, explanation: questions[questionIndex].explanation };
+                button.classList.add("selected");
             };
             return button;
         }
@@ -116,19 +364,37 @@
             const quizContainer = document.getElementById("quiz-container");
             const resultContainer = document.getElementById("result-container");
             const summaryContainer = document.getElementById("summary-container");
+            const resultList = document.getElementById("result-list");
+            const quizWarning = document.getElementById("quiz-warning");
+
+            // 모든 문제를 풀었는지 확인
+            if (userResponses.length !== questions.length) {
+                quizWarning.style.display = "block";
+                return;
+            }
+
+            quizWarning.style.display = "none";
 
             quizContainer.style.display = "none";
-            resultContainer.style.display = "none";
-            summaryContainer.style.display = "block";
+            summaryContainer.style.display = "none";
+            resultContainer.style.display = "block";
 
-            showSummary();
+            resultList.innerHTML = userResponses.map(response =>
+                `<div class="result-info">
+                    문제 ${response.questionIndex}: ${response.answer ? '정답' : '틀림'} (정답: ${questions[response.questionIndex - 1].answer})
+                    <button class="answer-button" onclick="showExplanation(${response.questionIndex - 1})">해설 보기</button>
+                </div>`
+            ).join('');
         }
 
         function showSummary() {
             const summaryList = document.getElementById("summary-list");
 
             summaryList.innerHTML = userResponses.map(response =>
-                `<li>문제 ${response.questionIndex}: ${response.answer ? '정답' : '틀림'}</li>`
+                `<li class="result-info">
+                    문제 ${response.questionIndex}: ${response.answer ? '정답' : '틀림'}
+                    <button class="answer-button" onclick="showExplanation(${response.questionIndex - 1})">해설 보기</button>
+                </li>`
             ).join('');
         }
 
@@ -145,7 +411,40 @@
             loadQuestions();
         }
 
-        // 초기화면 설정
+        function showExplanation(questionIndex) {
+            const popup = document.getElementById("answerExplanationPopup");
+            const popupQuestion = document.getElementById("popup-question");
+            const popupResult = document.getElementById("popup-result");
+            const popupExplanation = document.getElementById("popup-explanation");
+
+            popupQuestion.textContent = questions[questionIndex].question;
+            popupResult.textContent = `정답: ${questions[questionIndex].answer}`;
+            popupExplanation.innerHTML = `<p>${questions[questionIndex].explanation}</p>`;
+
+            popup.style.display = "flex";
+        }
+
+        function closePopup() {
+            const popup = document.getElementById("answerExplanationPopup");
+            popup.style.display = "none";
+        }
+
+        function toggleDarkMode() {
+            darkModeEnabled = !darkModeEnabled;
+            const body = document.body;
+            const toggleButton = document.getElementById("dark-mode-toggle");
+
+            if (darkModeEnabled) {
+                body.style.background = "#2c3e50";
+                body.style.color = "#ecf0f1";
+                toggleButton.classList.add("dark-mode");
+            } else {
+                body.style.background = "#f4f4f4";
+                body.style.color = "#333";
+                toggleButton.classList.remove("dark-mode");
+            }
+        }
+
         loadQuestions();
     </script>
 </body>
